@@ -1,0 +1,16 @@
+# Named volume no aplica aquí (sin estado persistente).
+# Las URLs de los backends se pasan como build args en tiempo de compilación
+# porque Vite las embebe en el JS estático — no son variables de runtime.
+# Reemplaza BACKEND_VENTAS_IP y BACKEND_DESPACHOS_IP con las IPs reales
+# del servidor donde corren los backends antes de hacer docker compose up.
+
+services:
+  front:
+    build:
+      context: .
+      args:
+        VITE_API_VENTAS_URL: http://BACKEND_VENTAS_IP:8080
+        VITE_API_DESPACHOS_URL: http://BACKEND_DESPACHOS_IP:8081
+    ports:
+      - "80:80"
+    restart: unless-stopped
