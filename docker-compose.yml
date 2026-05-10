@@ -9,8 +9,8 @@ services:
     build:
       context: .
       args:
-        VITE_API_VENTAS_URL: http://BACKEND_VENTAS_IP:8080
-        VITE_API_DESPACHOS_URL: http://BACKEND_DESPACHOS_IP:8081
+        VITE_API_VENTAS_URL: http://13.221.44.192:8080
+        VITE_API_DESPACHOS_URL: http://54.164.16.35:8081
     ports:
       - "80:80"
     restart: unless-stopped
