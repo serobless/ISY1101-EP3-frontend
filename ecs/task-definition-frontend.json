@@ -4,12 +4,12 @@
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "256",
   "memory": "512",
-  "executionRoleArn": "arn:aws:iam::593376755101:role/LabRole",
-  "taskRoleArn": "arn:aws:iam::593376755101:role/LabRole",
+  "executionRoleArn": "arn:aws:iam::968376323897:role/LabRole",
+  "taskRoleArn": "arn:aws:iam::968376323897:role/LabRole",
   "containerDefinitions": [
     {
       "name": "frontend",
-      "image": "593376755101.dkr.ecr.us-east-1.amazonaws.com/ep3-frontend:latest",
+      "image": "968376323897.dkr.ecr.us-east-1.amazonaws.com/ep3-frontend:latest",
       "essential": true,
       "portMappings": [
         { "containerPort": 8080, "protocol": "tcp" }
