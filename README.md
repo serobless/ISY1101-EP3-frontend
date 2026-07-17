@@ -12,7 +12,7 @@ Frontend React + Vite desplegado en AWS ECS Fargate como parte de la Evaluación
 ## Componentes AWS utilizados
 - **Amazon ECS (Fargate)**: orquestación de contenedores
 - **Amazon ECR**: registro de imágenes Docker (`ep3-frontend`)
-- **Application Auto Scaling**: Target Tracking sobre CPU (umbral 20%, min 1 - max 3 tareas)
+- **Application Auto Scaling**: Target Tracking sobre CPU (umbral 50%, min 1 - max 3 tareas). Umbral más alto que en el backend (20%) porque nginx sirviendo archivos estáticos tiene un costo de CPU por request mucho menor que la JVM del backend, así que puede tolerar más carga antes de necesitar una tarea adicional.
 - **CloudWatch Logs**: grupo `/ecs/ep3-frontend`
 
 ## Pipeline CI/CD (GitHub Actions)
@@ -20,9 +20,21 @@ Workflow `.github/workflows/deploy.yml`, disparado en cada push a `main`:
 1. Checkout del código
 2. Configuración de credenciales AWS (vía GitHub Secrets)
 3. Login a Amazon ECR
-4. Build de la imagen Docker con build-args de URLs del backend, push a ECR (tag `latest` y tag del commit SHA)
-5. Descarga y actualización de la Task Definition con la nueva imagen
+4. Build de la imagen Docker con build-args de URLs del backend (variable `vars.BACKEND_ALB_URL`, no hardcodeada), push a ECR (tag `latest` y tag del commit SHA)
+5. Actualización de la Task Definition versionada (`ecs/task-definition-frontend.json`) con la nueva imagen
 6. Deploy al servicio ECS con espera de estabilidad
+
+### Métricas del pipeline (último run exitoso)
+| Etapa | Duración |
+|---|---|
+| Build & push a ECR | ~17s |
+| Deploy a ECS (incluye espera de estabilidad) | ~2m18s |
+| **Total** | **~2m41s** |
+
+Notablemente más rápido que el pipeline del backend (~5m52s) porque no tiene que esperar el healthcheck del sidecar MySQL ni levantar la JVM.
+
+## Infraestructura como código
+La Task Definition ya no se genera en runtime con `aws ecs describe-task-definition`: vive versionada en `ecs/task-definition-frontend.json` y el pipeline solo le inyecta la imagen nueva antes de desplegar. `INFRAESTRUCTURA_frontend.md` sigue documentando el resto de los recursos (SG, servicio, autoscaling) como comandos AWS CLI por las restricciones del Learner Lab.
 
 ## Cómo correr el proyecto localmente
 ```bash

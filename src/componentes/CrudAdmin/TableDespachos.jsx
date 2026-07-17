@@ -5,6 +5,7 @@ import { FormCierreDespacho } from "./FormCierreDespacho";
 
 export const TableDespachos = () => {
   const [despachos, setDespachos] = useState([]);
+  const [error, setError] = useState(null);
 
   const despacho = async () => {
     await axios
@@ -17,6 +18,11 @@ export const TableDespachos = () => {
       .then((response) => {
         console.log(response.data);
         setDespachos(response.data);
+        setError(null);
+      })
+      .catch((err) => {
+        console.error("Error al obtener los despachos:", err);
+        setError("No se pudo conectar con el servicio de despachos. Verifica que el backend esté disponible.");
       });
   };
   // Llamada a la función para obtener los datos cuando el componente se monta
@@ -34,6 +40,11 @@ export const TableDespachos = () => {
 
   return (
     <>
+      {error && (
+        <div className="col-span-12 mb-4 text-center text-red-600 bg-red-100 border border-red-300 rounded-lg py-2 px-4">
+          {error}
+        </div>
+      )}
       <section className="grid text-center grid-cols-12 mb-8">
         <div className="col-span-12 flex justify-center">
           <div className="col-span-10 p-2 bg-white border border-gray-200 rounded-lg shadow dark:bg-white h-full overflow-hidden">

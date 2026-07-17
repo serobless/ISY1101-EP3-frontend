@@ -1,0 +1,28 @@
+{
+  "family": "ep3-frontend",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::593376755101:role/LabRole",
+  "taskRoleArn": "arn:aws:iam::593376755101:role/LabRole",
+  "containerDefinitions": [
+    {
+      "name": "frontend",
+      "image": "593376755101.dkr.ecr.us-east-1.amazonaws.com/ep3-frontend:latest",
+      "essential": true,
+      "portMappings": [
+        { "containerPort": 8080, "protocol": "tcp" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/ep3-frontend",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs",
+          "awslogs-create-group": "true"
+        }
+      }
+    }
+  ]
+}

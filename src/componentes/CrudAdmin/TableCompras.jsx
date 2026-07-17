@@ -5,6 +5,7 @@ import axios from "axios";
 
 export const TableCompras = () => {
   const [ventas, setVentas] = useState([]);
+  const [error, setError] = useState(null);
 
   const compras = async () => {
     await axios.get(`${import.meta.env.VITE_API_VENTAS_URL}/api/v1/ventas`, {
@@ -15,6 +16,10 @@ export const TableCompras = () => {
     }).then((response) => {
       console.log(response.data);
       setVentas(response.data);
+      setError(null);
+    }).catch((err) => {
+      console.error("Error al obtener las ventas:", err);
+      setError("No se pudo conectar con el servicio de ventas. Verifica que el backend esté disponible.");
     });
   };
   // Llamada a la función para obtener los datos cuando el componente se monta
@@ -34,6 +39,11 @@ export const TableCompras = () => {
 
   return (
     <>
+      {error && (
+        <div className="col-span-12 mb-4 text-center text-red-600 bg-red-100 border border-red-300 rounded-lg py-2 px-4">
+          {error}
+        </div>
+      )}
       <section className="grid text-center grid-cols-12 mb-8">
         <div className="col-span-12 flex justify-center">
           <div className="col-span-10 p-2 bg-white border border-gray-200 rounded-lg shadow dark:bg-white h-full overflow-hidden">

@@ -39,24 +39,19 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build \
-            --build-arg VITE_API_VENTAS_URL=http://ep3-backend-alb-2080595026.us-east-1.elb.amazonaws.com \
-            --build-arg VITE_API_DESPACHOS_URL=http://ep3-backend-alb-2080595026.us-east-1.elb.amazonaws.com \
+            --build-arg VITE_API_VENTAS_URL=${{ vars.BACKEND_ALB_URL }} \
+            --build-arg VITE_API_DESPACHOS_URL=${{ vars.BACKEND_ALB_URL }} \
             -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      - name: Download task definition
-        run: |
-          aws ecs describe-task-definition --task-definition ep3-frontend \
-          --query taskDefinition > task-definition.json
-
       - name: Update ECS task definition with new image
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: task-definition.json
+          task-definition: ecs/task-definition-frontend.json
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
